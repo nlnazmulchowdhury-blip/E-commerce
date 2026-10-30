@@ -1,11 +1,21 @@
-<div align="center">
+# CakeHaus BD
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+বাংলাদেশি কেক শপের স্টোরফ্রন্ট ও এডমিন প্যানেল — React 19 + Vite 8, ডেটা localStorage-এ (ট্যাবের মধ্যে লাইভ সিঙ্ক)।
 
-  <h1>Built with AI Studio</h2>
+## চালানো
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+```bash
+npm install
+npm run dev      # http://localhost:5199
+npm run build
+npm run preview
+```
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## রুট
 
-</div>
+- `/` স্টোরফ্রন্ট · `/shop` · `/product/:id` · `/cart` · `/checkout` · `/orders` · `/status`
+- `/admin` — ড্যাশবোর্ড, প্রোডাক্ট, অর্ডার, ব্যানার, সোশ্যাল ও যোগাযোগ
+
+## ছবি আপলোড
+
+`ImageField` কম্পোনেন্ট `POST /api/upload`-এ ছবি পাঠায় (Vite plugin মিডলওয়্যার, magic-byte যাচাই, ৮MB সীমা) এবং `/uploads/<file>` লিংক ফেরত দেয়।

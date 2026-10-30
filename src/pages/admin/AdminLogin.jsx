@@ -1,0 +1,93 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { IconCake } from '../../components/Icons';
+import { ADMIN_DEMO } from './adminAuth';
+
+export default function AdminLogin({ onSuccess }) {
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState('');
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (user.trim().toLowerCase() !== ADMIN_DEMO.user || pass !== ADMIN_DEMO.pass) {
+      setError('ইউজারনেম বা পাসওয়ার্ড ঠিক নেই।');
+      return;
+    }
+    setError('');
+    onSuccess();
+  };
+
+  return (
+    <div className="adm-login">
+      <div className="adm-login-glow" aria-hidden="true" />
+      <div className="adm-login-grid" aria-hidden="true" />
+
+      <form className="adm-login-card" onSubmit={submit}>
+        <Link to="/" className="adm-login-brand">
+          <span className="adm-logo">
+            <IconCake />
+          </span>
+          <span className="adm-login-brandtext">
+            Cake<span>Haus</span>
+            <small>ADMIN</small>
+          </span>
+        </Link>
+
+        <h1>অ্যাডমিন লগইন</h1>
+        <p className="adm-login-sub">স্টোর, অর্ডার আর প্রোডাক্ট ম্যানেজ করতে সাইন ইন করুন।</p>
+
+        <label className="adm-field">
+          <span>ইউজারনেম</span>
+          <input
+            className="adm-input"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+            placeholder="admin"
+            autoComplete="username"
+          />
+        </label>
+
+        <label className="adm-field">
+          <span>পাসওয়ার্ড</span>
+          <span className="adm-pass">
+            <input
+              className="adm-input"
+              type={show ? 'text' : 'password'}
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+            />
+            <button type="button" onClick={() => setShow((v) => !v)}>
+              {show ? 'লুকান' : 'দেখান'}
+            </button>
+          </span>
+        </label>
+
+        {error && (
+          <p className="adm-error-text" role="alert">
+            {error}
+          </p>
+        )}
+
+        <button type="submit" className="adm-btn primary block">
+          লগইন করুন
+        </button>
+
+        <div className="adm-demo">
+          <span>ডেমো অ্যাক্সেস</span>
+          <p>
+            <b>admin</b> / <b>cakehaus123</b>
+          </p>
+          <small>লোকাল ডেমো লগইন — প্রোডাকশনে সার্ভার-সাইড অথেন্টিকেশন লাগবে।</small>
+        </div>
+
+        <Link to="/" className="adm-login-back">
+          ← স্টোরে ফিরে যান
+        </Link>
+      </form>
+    </div>
+  );
+}
