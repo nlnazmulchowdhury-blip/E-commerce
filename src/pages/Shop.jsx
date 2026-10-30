@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { IconClose, IconSearch } from '../components/Icons';
-import { categories, discountPercent, getCategory } from '../data/products';
+import { discountPercent } from '../data/products';
 import { useCatalog } from '../context/CatalogContext';
 
 const sorts = [
@@ -14,12 +14,12 @@ const sorts = [
 ];
 
 export default function Shop() {
-  const { products } = useCatalog();
+  const { products, categories } = useCatalog();
   const [params, setParams] = useSearchParams();
   const cat = params.get('cat') || '';
   const q = params.get('q') || '';
   const sort = params.get('sort') || 'featured';
-  const category = getCategory(cat);
+  const category = categories.find((c) => c.slug === cat);
 
   const list = useMemo(() => {
     let out = [...products];
@@ -27,7 +27,7 @@ export default function Shop() {
     if (q) {
       const needle = q.toLowerCase();
       out = out.filter((p) => {
-        const c = getCategory(p.category);
+        const c = categories.find((x) => x.slug === p.category);
         return `${p.name} ${p.bn} ${c?.name} ${c?.bn}`.toLowerCase().includes(needle);
       });
     }
@@ -48,7 +48,7 @@ export default function Shop() {
         break;
     }
     return out;
-  }, [cat, q, sort, products]);
+  }, [cat, q, sort, products, categories]);
 
   const update = (key, value) => {
     const next = new URLSearchParams(params);

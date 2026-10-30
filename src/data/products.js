@@ -272,8 +272,13 @@ export function getProduct(slug) {
   return products.find((p) => p.slug === slug);
 }
 
-export function getCategory(slug) {
-  return categories.find((c) => c.slug === slug);
+export function slugify(text) {
+  return String(text)
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 export function discountPercent(p) {

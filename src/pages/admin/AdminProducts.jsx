@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useCatalog } from '../../context/CatalogContext';
 import { useShop } from '../../context/ShopContext';
-import { categories, formatTaka } from '../../data/products';
+import { formatTaka, slugify } from '../../data/products';
 import {
   IconBox,
   IconCheck,
@@ -17,7 +17,7 @@ const EMPTY = {
   name: '',
   bn: '',
   slug: '',
-  category: categories[0].slug,
+  category: '',
   image: '',
   price: '',
   oldPrice: '',
@@ -30,17 +30,12 @@ const EMPTY = {
   outOfStock: false,
 };
 
-function slugify(text) {
-  return text
-    .trim()
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function ProductForm({ product, products, onSave, onClose }) {
-  const [form, setForm] = useState(() => ({ ...EMPTY, ...(product || {}) }));
+function ProductForm({ product, products, categories, onSave, onClose }) {
+  const [form, setForm] = useState(() => ({
+    ...EMPTY,
+    category: categories[0]?.slug || '',
+    ...(product || {}),
+  }));
   const [slugTouched, setSlugTouched] = useState(Boolean(product));
   const [errors, setErrors] = useState({});
 
@@ -68,6 +63,7 @@ function ProductForm({ product, products, onSave, onClose }) {
       next.slug = 'এই slug আগেই ব্যবহার হয়েছে';
     }
     if (!Number(form.price) || Number(form.price) < 1) next.price = 'সঠিক দাম দিন';
+    if (!form.category) next.category = 'ক্যাটাগরি বেছে নিন';
     if (form.oldPrice && Number(form.oldPrice) <= Number(form.price)) {
       next.oldPrice = 'আগের দাম বর্তমান দামের চেয়ে বেশি হতে হবে';
     }
@@ -158,12 +154,21 @@ function ProductForm({ product, products, onSave, onClose }) {
             <label className="adm-field">
               <span>ক্যাটাগরি *</span>
               <select className="adm-select block" value={form.category} onChange={(e) => change('category', e.target.value)}>
+                {product && form.category && !categories.some((c) => c.slug === form.category) && (
+                  <option value={form.category}>{form.category} — মুছে ফেলা ক্যাটাগরি</option>
+                )}
+                {categories.length === 0 && <option value="">কোনো ক্যাটাগরি নেই</option>}
                 {categories.map((c) => (
                   <option key={c.slug} value={c.slug}>
                     {c.name} — {c.bn}
                   </option>
                 ))}
               </select>
+              {errors.category ? (
+                <small className="adm-error-text">{errors.category}</small>
+              ) : (
+                <small className="adm-hint">নতুন ক্যাটাগরি দরকার? সাইডবারের “ক্যাটাগরি” পেজ থেকে যোগ করুন</small>
+              )}
             </label>
 
             <label className="adm-field">
@@ -300,7 +305,7 @@ function ProductForm({ product, products, onSave, onClose }) {
 }
 
 export default function AdminProducts() {
-  const { products, addProduct, updateProduct, deleteProduct, toggleStock, resetProducts } = useCatalog();
+  const { products, categories, addProduct, updateProduct, deleteProduct, toggleStock, resetProducts } = useCatalog();
   const { pushToast } = useShop();
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('all');
@@ -522,6 +527,7 @@ export default function AdminProducts() {
           key={editing?.id || 'new'}
           product={editing}
           products={products}
+          categories={categories}
           onSave={save}
           onClose={() => {
             setFormOpen(false);

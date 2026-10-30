@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useCatalog } from '../context/CatalogContext';
 import { useSocial } from '../context/SocialContext';
-import { categories, formatTaka } from '../data/products';
+import { formatTaka } from '../data/products';
 import {
   IconCart,
   IconChevron,
@@ -13,19 +13,7 @@ import {
   IconCake,
 } from './Icons';
 
-const navLinks = [
-  { label: 'All Cakes', to: '/shop' },
-  { label: 'Birthday', to: '/shop?cat=birthday' },
-  { label: 'Wedding', to: '/shop?cat=wedding' },
-  { label: 'Cupcakes', to: '/shop?cat=cupcakes' },
-  { label: 'Cheesecakes', to: '/shop?cat=cheesecakes' },
-  { label: 'Brownies', to: '/shop?cat=brownies' },
-  { label: 'Photo Cakes', to: '/shop?cat=photo' },
-  { label: 'Gift Boxes', to: '/shop?cat=gift' },
-];
-
 const moreLinks = [
-  { label: 'Custom Cakes', to: '/shop?cat=custom' },
   { label: 'Offers', to: '/shop?sort=discount' },
   { label: 'My Orders', to: '/orders' },
   { label: 'Delivery & Returns', to: '/#delivery' },
@@ -33,7 +21,7 @@ const moreLinks = [
 
 export default function Header() {
   const { cartCount, setCartOpen } = useShop();
-  const { products } = useCatalog();
+  const { products, categories } = useCatalog();
   const { whatsappLabel, whatsappTel } = useSocial();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
@@ -53,7 +41,15 @@ export default function Header() {
         return `${p.name} ${p.bn} ${cat?.name}`.toLowerCase().includes(q);
       })
       .slice(0, 5);
-  }, [query, products]);
+  }, [query, products, categories]);
+
+  const navLinks = useMemo(
+    () => [
+      { label: 'All Cakes', to: '/shop' },
+      ...categories.map((c) => ({ label: c.name, to: `/shop?cat=${c.slug}` })),
+    ],
+    [categories],
+  );
 
   useEffect(() => {
     const onPointer = (e) => {

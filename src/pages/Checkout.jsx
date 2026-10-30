@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useSettings } from '../context/SettingsContext';
 import { deliveryFees, formatTaka, freeDeliveryAbove } from '../data/products';
 import { IconCash, IconCheck, IconLeaf, IconShield, IconTruck } from '../components/Icons';
 
@@ -9,6 +10,8 @@ const TODAY = new Date().toISOString().slice(0, 10);
 
 export default function Checkout() {
   const { cart, cartTotal, placeOrder, pushToast } = useShop();
+  const { promo: promoBand } = useSettings();
+  const promoCode = promoBand.code.trim().toUpperCase();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
@@ -25,7 +28,10 @@ export default function Checkout() {
   const [promo, setPromo] = useState('');
   const [placing, setPlacing] = useState(false);
 
-  const discount = useMemo(() => (promo === 'HBD10' ? Math.round(cartTotal * 0.1) : 0), [promo, cartTotal]);
+  const discount = useMemo(
+    () => (promoCode && promo === promoCode ? Math.round(cartTotal * 0.1) : 0),
+    [promo, promoCode, cartTotal],
+  );
   const delivery = cartTotal >= freeDeliveryAbove || cartTotal === 0 ? 0 : deliveryFees[form.area];
   const total = Math.max(0, cartTotal - discount) + delivery;
 
@@ -35,9 +41,9 @@ export default function Checkout() {
   };
 
   const applyPromo = () => {
-    if (promoInput.trim().toUpperCase() === 'HBD10') {
-      setPromo('HBD10');
-      pushToast('HBD10 প্রয়োগ হয়েছে — ১০% ছাড়');
+    if (promoCode && promoInput.trim().toUpperCase() === promoCode) {
+      setPromo(promoCode);
+      pushToast(`${promoCode} প্রয়োগ হয়েছে — ১০% ছাড়`);
     } else {
       setPromo('');
       pushToast('কোডটি সঠিক নয়', 'error');
@@ -289,7 +295,7 @@ export default function Checkout() {
                 প্রয়োগ
               </button>
             </div>
-            {promo && <p className="promo-ok">কোড HBD10 প্রয়োগ হয়েছে · ১০% ছাড়</p>}
+            {promo && <p className="promo-ok">কোড {promo} প্রয়োগ হয়েছে · ১০% ছাড়</p>}
 
             <dl className="totals">
               <div>

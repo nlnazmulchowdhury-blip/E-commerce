@@ -5,14 +5,16 @@ import { IconCart, IconCash, IconLeaf, IconTruck, IconWhatsapp } from '../compon
 import { useShop } from '../context/ShopContext';
 import { useCatalog } from '../context/CatalogContext';
 import { useSocial } from '../context/SocialContext';
-import { discountPercent, formatTaka, getCategory, sizeFactors } from '../data/products';
+import { useSettings } from '../context/SettingsContext';
+import { discountPercent, formatTaka, sizeFactors } from '../data/products';
 
 export default function ProductPage() {
   const { slug } = useParams();
-  const { products } = useCatalog();
+  const { products, categories } = useCatalog();
   const product = products.find((p) => p.slug === slug);
   const { addToCart } = useShop();
   const { whatsappHref } = useSocial();
+  const { buyNow: buyNowCta } = useSettings();
   const navigate = useNavigate();
   const [sizeIndex, setSizeIndex] = useState(0);
   const [qty, setQty] = useState(1);
@@ -35,7 +37,7 @@ export default function ProductPage() {
     );
   }
 
-  const category = getCategory(product.category);
+  const category = categories.find((c) => c.slug === product.category);
   const factor = product.sizes ? sizeFactors[sizeIndex].factor : 1;
   const unitPrice = Math.round((product.price * factor) / 10) * 10;
   const off = discountPercent(product);
@@ -152,9 +154,13 @@ export default function ProductPage() {
                 <IconCart /> কার্টে যোগ করুন
               </button>
             </div>
-            <button type="button" className="btn dark block" disabled={product.outOfStock} onClick={buyNow}>
-              এখনই কিনুন — {formatTaka(unitPrice * qty)}
-            </button>
+            {buyNowCta.enabled ? (
+              <button type="button" className="btn dark block" disabled={product.outOfStock} onClick={buyNow}>
+                {buyNowCta.message.trim() || 'এখনই কিনুন'} — {formatTaka(unitPrice * qty)}
+              </button>
+            ) : buyNowCta.message.trim() ? (
+              <p className="buy-note">{buyNowCta.message}</p>
+            ) : null}
 
             <a
               className="wa-link"
@@ -164,47 +170,6 @@ export default function ProductPage() {
             >
               <IconWhatsapp /> WhatsApp-এ অর্ডার করতে চান? মেসেজ দিন
             </a>
-
-            <div className="product-facts">
-              <div>
-                <IconTruck />
-                <span>
-                  <b>ডেলিভারি</b>
-                  ঢাকায় ২ ঘণ্টা · বাইরে ২৪ ঘণ্টা
-                </span>
-              </div>
-              <div>
-                <IconLeaf />
-                <span>
-                  <b>উপকরণ</b>
-                  ফ্রেশ ক্রিম, রিয়েল চকলেট, হালাল
-                </span>
-              </div>
-              <div>
-                <IconCash />
-                <span>
-                  <b>পেমেন্ট</b>
-                  ক্যাশ অন ডেলিভারি / bKash
-                </span>
-              </div>
-            </div>
-
-            <div className="accordion">
-              <details>
-                <summary>সংরক্ষণ ও পরিবেশন</summary>
-                <p>
-                  ফ্রিজে ২–৫°C-এ রাখুন। পরিবেশনের ২০ মিনিট আগে বের করুন। ফ্রেশ ফলের কেক ২ দিনের মধ্যে
-                  খেয়ে ফেলাই ভালো।
-                </p>
-              </details>
-              <details>
-                <summary>ডেলিভারি ও রিটার্ন</summary>
-                <p>
-                  ঢাকার ভিতরে ২ ঘণ্টা, ঢাকার বাইরে ২৪ ঘণ্টায় ডেলিভারি। কেক নষ্ট বা ভুল পৌঁছালে
-                  ডেলিভারির ২ ঘণ্টার মধ্যে জানালে রিপ্লেস বা রিফান্ড।
-                </p>
-              </details>
-            </div>
           </div>
         </div>
 

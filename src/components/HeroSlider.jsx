@@ -1,14 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useBanners } from '../context/BannerContext';
 import { DEFAULT_BANNERS } from '../data/banners';
-import { IconArrow, IconChevron } from './Icons';
-
-const STATS = [
-  { value: '৫,০০০+', label: 'হ্যাপি কাস্টমার' },
-  { value: '4.9 ★', label: 'কাস্টমার রেটিং' },
-  { value: '২ ঘণ্টা', label: 'ঢাকায় ডেলিভারি' },
-];
+import { IconChevron } from './Icons';
 
 const AUTOPLAY_MS = 5200;
 
@@ -107,51 +100,9 @@ export default function HeroSlider() {
                 loading={i === 0 ? 'eager' : 'lazy'}
                 draggable="false"
               />
-              <div className="hero-copy">
-                <span className="eyebrow">{banner.eyebrow}</span>
-                <h1>
-                  {banner.title}
-                  <br />
-                  <em>{banner.highlight}</em>
-                </h1>
-                <p>{banner.desc}</p>
-                <div className="hero-cta">
-                  {banner.primaryLabel && (
-                    <Link className="btn dark lg" to={banner.primaryTo || '/shop'} tabIndex={isActive ? 0 : -1}>
-                      {banner.primaryLabel} <IconArrow />
-                    </Link>
-                  )}
-                  {banner.secondaryLabel && (
-                    <Link className="btn ghost lg" to={banner.secondaryTo || '/shop'} tabIndex={isActive ? 0 : -1}>
-                      {banner.secondaryLabel}
-                    </Link>
-                  )}
-                </div>
-                {banner.showStats && (
-                  <div className="hero-stats">
-                    {STATS.map((s) => (
-                      <div key={s.label}>
-                        <b>{s.value}</b>
-                        <span>{s.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
             </div>
           );
         })}
-      </div>
-
-      <div className="hero-chips" aria-hidden="true">
-        <span>
-          <b>১০০% ফ্রেশ</b>
-          <small>প্রতিদিন বেকড</small>
-        </span>
-        <span>
-          <b>ফ্রি ডেলিভারি</b>
-          <small>২৫০০৳+ অর্ডারে</small>
-        </span>
       </div>
 
       {count > 1 && (

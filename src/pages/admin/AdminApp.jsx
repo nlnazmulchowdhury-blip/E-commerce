@@ -12,13 +12,17 @@ import {
   IconGrid,
   IconImage,
   IconLogout,
+  IconSettings,
   IconShare,
+  IconTag,
 } from '../../components/Icons';
 import AdminLogin from './AdminLogin';
 import AdminBanners from './AdminBanners';
+import AdminCategories from './AdminCategories';
 import AdminDashboard from './AdminDashboard';
 import AdminOrders from './AdminOrders';
 import AdminProducts from './AdminProducts';
+import AdminSettings from './AdminSettings';
 import AdminSocial from './AdminSocial';
 import { isAdminAuthed, setAdminAuthed } from './adminAuth';
 import './admin.css';
@@ -27,15 +31,17 @@ const PAGES = [
   { path: '/admin', title: 'ড্যাশবোর্ড', sub: 'বিক্রি, অর্ডার আর স্টকের এক নজরে' },
   { path: '/admin/orders', title: 'অর্ডার ম্যানেজমেন্ট', sub: 'কাস্টমার অর্ডার দেখুন ও স্ট্যাটাস আপডেট করুন' },
   { path: '/admin/products', title: 'প্রোডাক্ট ম্যানেজমেন্ট', sub: 'কেক যোগ করুন, দাম ও স্টক ঠিক করুন' },
+  { path: '/admin/categories', title: 'ক্যাটাগরি ম্যানেজমেন্ট', sub: 'নতুন ক্যাটাগরি যোগ করুন, নাম-ছবি বদলান ও সাজান' },
   { path: '/admin/banners', title: 'ব্যানার ম্যানেজমেন্ট', sub: 'হোমের স্লাইডার ব্যানার যোগ, এডিট ও সাজান' },
   { path: '/admin/social', title: 'সোশ্যাল ও যোগাযোগ', sub: 'হোয়াটসঅ্যাপ, মেসেঞ্জারসহ নিজের অ্যাকাউন্ট ও নম্বর সেট করুন' },
+  { path: '/admin/settings', title: 'স্টোর সেটিংস', sub: 'প্রোডাক্ট পেজের অর্ডার বাটন ও সাইটের লেখা নিয়ন্ত্রণ করুন' },
 ];
 
 export default function AdminApp() {
   const [authed, setAuthed] = useState(isAdminAuthed);
   const [navOpen, setNavOpen] = useState(false);
   const { orders } = useShop();
-  const { products } = useCatalog();
+  const { products, categories } = useCatalog();
   const { banners } = useBanners();
   const { activeChannels } = useSocial();
   const location = useLocation();
@@ -91,6 +97,11 @@ export default function AdminApp() {
             <span>প্রোডাক্ট</span>
             <b className="adm-side-count">{products.length}</b>
           </NavLink>
+          <NavLink to="/admin/categories" className={({ isActive }) => (isActive ? 'on' : '')} onClick={() => setNavOpen(false)}>
+            <IconTag />
+            <span>ক্যাটাগরি</span>
+            <b className="adm-side-count">{categories.length}</b>
+          </NavLink>
           <NavLink to="/admin/banners" className={({ isActive }) => (isActive ? 'on' : '')} onClick={() => setNavOpen(false)}>
             <IconImage />
             <span>ব্যানার</span>
@@ -100,6 +111,10 @@ export default function AdminApp() {
             <IconShare />
             <span>সোশ্যাল</span>
             <b className="adm-side-count">{activeChannels.length}</b>
+          </NavLink>
+          <NavLink to="/admin/settings" className={({ isActive }) => (isActive ? 'on' : '')} onClick={() => setNavOpen(false)}>
+            <IconSettings />
+            <span>সেটিংস</span>
           </NavLink>
         </nav>
 
@@ -156,8 +171,10 @@ export default function AdminApp() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
             <Route path="/admin/banners" element={<AdminBanners />} />
             <Route path="/admin/social" element={<AdminSocial />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
         </div>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useSocial } from '../context/SocialContext';
@@ -8,43 +7,11 @@ import SocialGlyph from './SocialGlyph';
 const YEAR = new Date().getFullYear();
 
 export default function Footer() {
-  const { pushToast, setCartOpen } = useShop();
+  const { setCartOpen } = useShop();
   const { activeChannels, whatsappLabel, whatsappTel } = useSocial();
-  const [email, setEmail] = useState('');
-
-  const subscribe = (e) => {
-    e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      pushToast('সঠিক ইমেইল দিন', 'error');
-      return;
-    }
-    pushToast('সাবস্ক্রাইব হয়েছে — অফার ঢাকায় পৌঁছে যাবে');
-    setEmail('');
-  };
 
   return (
     <footer className="site-footer">
-      <div className="footer-news">
-        <div className="container news-inner">
-          <div>
-            <h3>নতুন কেক, নতুন অফার — সবার আগে জানুন</h3>
-            <p>সাবস্ক্রাইব করে পান ১০% ছাড়ের প্রথম অর্ডার কোড।</p>
-          </div>
-          <form onSubmit={subscribe} className="news-form">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="আপনার ইমেইল"
-              aria-label="ইমেইল"
-            />
-            <button type="submit" className="btn dark">
-              সাবস্ক্রাইব
-            </button>
-          </form>
-        </div>
-      </div>
-
       <div className="container footer-grid">
         <div className="footer-brand">
           <Link to="/" className="brand">

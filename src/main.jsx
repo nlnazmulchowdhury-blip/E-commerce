@@ -5,6 +5,7 @@ import App from './App.jsx';
 import { BannerProvider } from './context/BannerContext.jsx';
 import { CatalogProvider } from './context/CatalogContext.jsx';
 import { SocialProvider } from './context/SocialContext.jsx';
+import { SettingsProvider } from './context/SettingsContext.jsx';
 import { ShopProvider } from './context/ShopContext.jsx';
 import './styles.css';
 
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')).render(
       <BannerProvider>
         <SocialProvider>
           <CatalogProvider>
-            <ShopProvider>
-              <App />
-            </ShopProvider>
+            <SettingsProvider>
+              <ShopProvider>
+                <App />
+              </ShopProvider>
+            </SettingsProvider>
           </CatalogProvider>
         </SocialProvider>
       </BannerProvider>
